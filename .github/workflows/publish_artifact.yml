@@ -14,7 +14,7 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn package
+      run: mvn --no-transfer-progress package
     - name: Publish Artifact
       uses: samuelmeuli/action-maven-publish@v1
       with:
