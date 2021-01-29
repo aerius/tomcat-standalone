@@ -25,6 +25,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
@@ -33,6 +35,9 @@ public class TomcatStartup {
   private static final String CONFIG_PORT = "TOMCAT_STANDALONE_PORT";
   private static final String CONFIG_APP_BASE = "TOMCAT_STANDALONE_APP_BASE";
   private static final String CONFIG_CONTEXT_PATH = "TOMCAT_STANDALONE_CONTEXT_PATH";
+
+  // Every envrionment variable starting with this prefix will be written to the System properties (without the prefix) to be used inside the context.xml dynamically.
+  private static final String CONTEXT_PREFIX = "CONTEXT_";
 
   public static void main(final String[] args) throws LifecycleException, InterruptedException, ServletException {
     try {
@@ -44,6 +49,8 @@ public class TomcatStartup {
       final String appBase =
         Files.createTempDirectory(Paths.get(configAppBase == null ? "" : configAppBase).toAbsolutePath(), "standalone").toString();
       System.out.println("- Going to use appBase: " + appBase);
+
+      setContextPropertiesFromEnvironment();
 
       final Tomcat tomcat = new Tomcat();
       tomcat.setPort(configStandalonePort == null ? 8080 : configStandalonePort);
@@ -65,6 +72,26 @@ public class TomcatStartup {
       System.err.println("Error starting embedded tomcat properly");
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Looks for ENV variables starting with CONTEXT_PREFIX and sets them
+   *  (without the prefix) as System property to be used in context.xml files
+   *  as present in the standalone war.
+   * Tomcat will by default allow System properties to be used as variables
+   *  in context.xml files.
+   */
+  private static void setContextPropertiesFromEnvironment() {
+    System.getenv().entrySet().stream()
+      .filter(x -> x.getKey().startsWith(CONTEXT_PREFIX))
+      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)).entrySet()
+      .forEach(x -> setContextPropertyFromEnvironment(x.getKey(), x.getValue()));
+  }
+
+  private static void setContextPropertyFromEnvironment(final String envKey, final String envValue) {
+    final String key = envKey.substring(CONTEXT_PREFIX.length());
+    System.out.println("- Setting system property: " + key);
+    System.setProperty(key, envValue);
   }
 
   /**
