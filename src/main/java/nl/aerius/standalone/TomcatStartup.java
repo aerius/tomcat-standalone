@@ -16,17 +16,16 @@
  */
 package nl.aerius.standalone;
 
-import javax.servlet.ServletException;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.servlet.ServletException;
+
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
@@ -45,7 +44,7 @@ public class TomcatStartup {
       final String configAppBase = getSetting(CONFIG_APP_BASE);
       final String configContextPath = getSetting(CONFIG_CONTEXT_PATH);
 
-      // Create a temp directory to use as the app base. If overriden use the path given, otherwise the current directory will be used.
+      // Create a temp directory to use as the app base. If overridden use the path given, otherwise the current directory will be used.
       final String appBase =
         Files.createTempDirectory(Paths.get(configAppBase == null ? "" : configAppBase).toAbsolutePath(), "standalone").toString();
       System.out.println("- Going to use appBase: " + appBase);
@@ -55,8 +54,10 @@ public class TomcatStartup {
       final Tomcat tomcat = new Tomcat();
       tomcat.setPort(configStandalonePort == null ? 8080 : configStandalonePort);
       tomcat.getHost().setAppBase(appBase);
-      // This does more then print the Connector. getConnector() also initializes the Connector and adds it to the service.
-      // We could do it ourselves but why add code already present and maintained by the Tomcat team. 
+      // Enable JDNI naming (as needed by some webapps)
+      tomcat.enableNaming();
+      // This does more then print the Connector. getConnector() also initialises the Connector and adds it to the service.
+      // We could do it ourselves but why add code already present and maintained by the Tomcat team.
       System.out.println("- Using Connector: " + tomcat.getConnector());
 
       final URI jarURI = TomcatStartup.class.getProtectionDomain().getCodeSource().getLocation().toURI();
@@ -96,7 +97,7 @@ public class TomcatStartup {
 
   /**
    * Get settings from system properties and environment variables.
-   * System properties will override envrionment variables if both are present.
+   * System properties will override environment variables if both are present.
    *
    * @return String containing the setting, null if not found.
    */
@@ -113,7 +114,7 @@ public class TomcatStartup {
 
   /**
    * Get settings from system properties and environment variables as an integer.
-   * System properties will override envrionment variables if both are present.
+   * System properties will override environment variables if both are present.
    *
    * @return If set an Integer containing the setting, null if not found.
    */

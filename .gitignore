@@ -1,2 +1,7 @@
 # Ignore target directory
 target
+
+# Eclipse files
+.classpath
+.project
+.settings
