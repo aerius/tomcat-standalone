@@ -34,6 +34,7 @@ public class TomcatStartup {
   private static final String CONFIG_PORT = "TOMCAT_STANDALONE_PORT";
   private static final String CONFIG_APP_BASE = "TOMCAT_STANDALONE_APP_BASE";
   private static final String CONFIG_CONTEXT_PATH = "TOMCAT_STANDALONE_CONTEXT_PATH";
+  private static final String CONFIG_CONTEXT_DIRECTORY = "TOMCAT_STANDALONE_CONTEXT_DIRECTORY";
 
   // Every envrionment variable starting with this prefix will be written to the System properties (without the prefix) to be used inside the context.xml dynamically.
   private static final String CONTEXT_PREFIX = "CONTEXT_";
@@ -43,6 +44,7 @@ public class TomcatStartup {
       final Integer configStandalonePort = getSettingInt(CONFIG_PORT);
       final String configAppBase = getSetting(CONFIG_APP_BASE);
       final String configContextPath = getSetting(CONFIG_CONTEXT_PATH);
+      final String configContextDirectory = getSetting(CONFIG_CONTEXT_DIRECTORY);
 
       // Create a temp directory to use as the app base. If overridden use the path given, otherwise the current directory will be used.
       final String appBase =
@@ -60,10 +62,15 @@ public class TomcatStartup {
       // We could do it ourselves but why add code already present and maintained by the Tomcat team.
       System.out.println("- Using Connector: " + tomcat.getConnector());
 
-      final URI jarURI = TomcatStartup.class.getProtectionDomain().getCodeSource().getLocation().toURI();
-      System.out.println("- Going to deploy: " + jarURI.toURL().toString());
       System.out.println("- Using context: " + (configContextPath == null ? "/" : configContextPath));
-      tomcat.addWebapp(configContextPath == null ? "" : configContextPath, jarURI.toURL());
+      if (configContextDirectory == null) {
+        final URI jarURI = TomcatStartup.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+        System.out.println("- Going to deploy: " + jarURI.toURL().toString());
+        tomcat.addWebapp(configContextPath == null ? "" : configContextPath, jarURI.toURL());
+      } else {
+        System.out.println("- Going to deploy: " + configContextDirectory);
+        tomcat.addWebapp(configContextPath == null ? "" : configContextPath, configContextDirectory);
+      }
       System.out.println();
 
       System.out.println("--- Start embedded Tomcat logging ---");
