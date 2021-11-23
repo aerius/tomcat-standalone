@@ -36,7 +36,7 @@ public class TomcatStartup {
   private static final String CONFIG_CONTEXT_PATH = "TOMCAT_STANDALONE_CONTEXT_PATH";
   private static final String CONFIG_CONTEXT_DIRECTORY = "TOMCAT_STANDALONE_CONTEXT_DIRECTORY";
 
-  // Every envrionment variable starting with this prefix will be written to the System properties (without the prefix) to be used inside the context.xml dynamically.
+  // Every environment variable starting with this prefix will be written to the System properties (without the prefix) to be used inside the context.xml dynamically.
   private static final String CONTEXT_PREFIX = "CONTEXT_";
 
   public static void main(final String[] args) throws LifecycleException, InterruptedException, ServletException {

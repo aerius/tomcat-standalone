@@ -38,6 +38,12 @@
     </license>
   </licenses>
 
+  <scm>
+    <connection>scm:git:ssh://git@github.com/aerius/tomcat-standalone.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/aerius/tomcat-standalone.git</developerConnection>
+    <url>https://www.github.com/aerius/tomcat-standalone</url>
+  </scm>
+
   <distributionManagement>
     <repository>
       <id>aerius-nexus</id>
@@ -54,11 +60,6 @@
       <id>aerius-nexus-public</id>
       <name>AERIUS Nexus repository</name>
       <url>https://nexus.aerius.nl/repository/maven-public/</url>
-    </repository>
-    <repository>
-      <id>OSGEO</id>
-      <name>OSGEO GeoServer Maven Repository</name>
-      <url>https://repo.osgeo.org/repository/release/</url>
     </repository>
   </repositories>
 
