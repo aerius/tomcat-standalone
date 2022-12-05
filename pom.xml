@@ -64,12 +64,20 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>aerius-nexus-public</id>
+      <name>AERIUS Nexus Repository</name>
+      <url>https://nexus.aerius.nl/repository/maven-public/</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <properties>
-    <tomcat.version>9.0.65</tomcat.version>
+    <tomcat.version>9.0.69</tomcat.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <aerius-tools.version>1.2.0-SNAPSHOT</aerius-tools.version>
+    <aerius-tools.version>1.2.0</aerius-tools.version>
   </properties>
 
   <dependencies>
