@@ -20,11 +20,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>nl.aerius</groupId>
-  <artifactId>tomcat-standalone</artifactId>
+  <artifactId>tomcat-standalone-parent</artifactId>
   <version>1.2.0-SNAPSHOT</version>
   <name>Tomcat :: Standalone</name>
   <description>Package to be used to run webapps standalone (with an embedded Tomcat server).</description>
-  <packaging>jar</packaging>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>tomcat-standalone</module>
+  </modules>
 
   <organization>
     <name>Ministry of Economic Affairs of The Netherlands</name>
@@ -80,169 +84,43 @@
     <aerius-tools.version>1.2.0</aerius-tools.version>
   </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-core</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jasper-el</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-jsp-api</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.tomcat</groupId>
-      <artifactId>tomcat-dbcp</artifactId>
-      <version>${tomcat.version}</version>
-    </dependency>
-  </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>versions-maven-plugin</artifactId>
-          <version>2.11.0</version>
-          <configuration>
-            <rulesUri>classpath:///versions_maven_plugin_rules.xml</rulesUri>
-            <allowMajorUpdates>false</allowMajorUpdates>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>nl.aerius</groupId>
-              <artifactId>tools</artifactId>
-              <version>${aerius-tools.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-
-        <plugin>
-          <groupId>org.owasp</groupId>
-          <artifactId>dependency-check-maven</artifactId>
-          <version>7.1.2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
-    <plugins>
-      <plugin>
-        <groupId>com.mycila</groupId>
-        <artifactId>license-maven-plugin</artifactId>
-        <version>4.1</version>
-        <configuration>
-          <licenseSets>
-            <licenseSet>
-              <header>license-header.txt</header>
-
-              <includes>
-                <include>**/*.java</include>
-                <include>**/pom.xml</include>
-              </includes>
-
-              <excludes>
-                <!-- External source code present in our source code -->
-                <exclude>**/src/main/java/com/**/*.java</exclude>
-                <exclude>**/src/main/resources/nl/overheid/aerius/super/java/time/LocalDate.java</exclude>
-              </excludes>
-            </licenseSet>
-          </licenseSets>
-          <mapping>
-            <java>SLASHSTAR_STYLE</java>
-          </mapping>
-        </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>nl.aerius</groupId>
-            <artifactId>tools</artifactId>
-            <version>${aerius-tools.version}</version>
-          </dependency>
-        </dependencies>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.1.0</version>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireMavenVersion>
-                  <version>[3.6.3,)</version>
-                </requireMavenVersion>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-
-  <profiles>
-    <profile>
-      <id>dependency-check</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.owasp</groupId>
-            <artifactId>dependency-check-maven</artifactId>
-            <inherited>false</inherited>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>aggregate</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <!-- If we ever want to fail on high CVSS scores, this is an example how -->
-              <!-- <failBuildOnCVSS>8</failBuildOnCVSS> -->
-              <!-- Generate all report formats -->
-              <format>ALL</format>
-              <!-- Don't use Nexus Analyzer -->
-              <centralAnalyzerEnabled>false</centralAnalyzerEnabled>
-              <!-- Am I the latest version? -->
-              <versionCheckEnabled>true</versionCheckEnabled>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
-
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>javax.servlet-api</artifactId>
+        <version>4.0.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper-el</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jsp-api</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-dbcp</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-annotations-api</artifactId>
+        <version>${tomcat.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
