@@ -1,0 +1,13 @@
+<web-fragment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns="http://java.sun.com/xml/ns/javaee"
+              xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-fragment_3_0.xsd"
+              id="tomcat-standalone" version="3.0">
+
+  <security-constraint>
+    <web-resource-collection>
+      <web-resource-name>Default blacklist</web-resource-name>
+      <url-pattern>/*</url-pattern>
+    </web-resource-collection>
+    <auth-constraint />
+  </security-constraint>
+</web-fragment>
