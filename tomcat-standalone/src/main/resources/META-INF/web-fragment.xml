@@ -5,7 +5,7 @@
 
   <security-constraint>
     <web-resource-collection>
-      <web-resource-name>Default blacklist</web-resource-name>
+      <web-resource-name>Default blocklist</web-resource-name>
       <url-pattern>/*</url-pattern>
     </web-resource-collection>
     <auth-constraint />
