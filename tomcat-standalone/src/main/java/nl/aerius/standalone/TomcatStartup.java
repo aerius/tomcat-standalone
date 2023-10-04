@@ -109,9 +109,9 @@ public class TomcatStartup {
   }
 
   /**
-   * Looks for system property or env variable CONNECTOR_PROPERTIES.
+   * Looks for system property or env variable TOMCAT_CONNECTOR_PROPERTIES.
    * If present, splits the value and sets the key/values as properties on the connector.
-   * Properties should be split by ';', while the key and value of each property should be split by ':'.
+   * Properties should be separated by ';', while the key and value of each property should be separated by ':'.
    */
   private static void setConnectorPropertiesFromEnvironment(final Connector connector) {
     final String connectorProperties = getSetting(CONNECTOR_PROPERTIES);
