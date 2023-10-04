@@ -21,12 +21,12 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.ServletException;
-
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 
 public class TomcatStartup {
@@ -39,7 +39,11 @@ public class TomcatStartup {
   // Every environment variable starting with this prefix will be written to the System properties (without the prefix) to be used inside the context.xml dynamically.
   private static final String CONTEXT_PREFIX = "CONTEXT_";
 
-  public static void main(final String[] args) throws LifecycleException, InterruptedException, ServletException {
+  private static final String CONNECTOR_PROPERTIES = "TOMCAT_CONNECTOR_PROPERTIES";
+  private static final String PROPERTIES_DELIMITER = ";";
+  private static final String PROPERTY_KEY_VALUE_DELIMITER = ":";
+
+  public static void main(final String[] args) throws LifecycleException {
     try {
       final Integer configStandalonePort = getSettingInt(CONFIG_PORT);
       final String configAppBase = getSetting(CONFIG_APP_BASE);
@@ -48,7 +52,7 @@ public class TomcatStartup {
 
       // Create a temp directory to use as the app base. If overridden use the path given, otherwise the current directory will be used.
       final String appBase =
-        Files.createTempDirectory(Paths.get(configAppBase == null ? "" : configAppBase).toAbsolutePath(), "standalone").toString();
+          Files.createTempDirectory(Paths.get(configAppBase == null ? "" : configAppBase).toAbsolutePath(), "standalone").toString();
       System.out.println("- Going to use appBase: " + appBase);
 
       setContextPropertiesFromEnvironment();
@@ -61,6 +65,8 @@ public class TomcatStartup {
       // This does more then print the Connector. getConnector() also initialises the Connector and adds it to the service.
       // We could do it ourselves but why add code already present and maintained by the Tomcat team.
       System.out.println("- Using Connector: " + tomcat.getConnector());
+
+      setConnectorPropertiesFromEnvironment(tomcat.getConnector());
 
       System.out.println("- Using context: " + (configContextPath == null ? "/" : configContextPath));
       if (configContextDirectory == null) {
@@ -76,7 +82,7 @@ public class TomcatStartup {
       System.out.println("--- Start embedded Tomcat logging ---");
       tomcat.start();
       tomcat.getServer().await();
-    } catch (final URISyntaxException | IOException  e) {
+    } catch (final URISyntaxException | IOException e) {
       System.err.println("Error starting embedded tomcat properly");
       e.printStackTrace();
     }
@@ -91,15 +97,39 @@ public class TomcatStartup {
    */
   private static void setContextPropertiesFromEnvironment() {
     System.getenv().entrySet().stream()
-      .filter(x -> x.getKey().startsWith(CONTEXT_PREFIX))
-      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)).entrySet()
-      .forEach(x -> setContextPropertyFromEnvironment(x.getKey(), x.getValue()));
+        .filter(x -> x.getKey().startsWith(CONTEXT_PREFIX))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)).entrySet()
+        .forEach(x -> setContextPropertyFromEnvironment(x.getKey(), x.getValue()));
   }
 
   private static void setContextPropertyFromEnvironment(final String envKey, final String envValue) {
     final String key = envKey.substring(CONTEXT_PREFIX.length());
     System.out.println("- Setting system property: " + key);
     System.setProperty(key, envValue);
+  }
+
+  /**
+   * Looks for system property or env variable TOMCAT_CONNECTOR_PROPERTIES.
+   * If present, splits the value and sets the key/values as properties on the connector.
+   * Properties should be separated by ';', while the key and value of each property should be separated by ':'.
+   */
+  private static void setConnectorPropertiesFromEnvironment(final Connector connector) {
+    final String connectorProperties = getSetting(CONNECTOR_PROPERTIES);
+    if (connectorProperties != null) {
+      Arrays.stream(connectorProperties.split(PROPERTIES_DELIMITER))
+          .filter(x -> x.contains(PROPERTY_KEY_VALUE_DELIMITER))
+          .forEach(propertyKeyValue -> setConnectorPropertyFromEnvironment(connector, propertyKeyValue));
+    }
+  }
+
+  private static void setConnectorPropertyFromEnvironment(final Connector connector, final String propertyKeyValue) {
+    final String[] split = propertyKeyValue.split(PROPERTY_KEY_VALUE_DELIMITER);
+    if (split.length == 2) {
+      System.out.println("- Setting connector property: " + Arrays.toString(split));
+      connector.setProperty(split[0], split[1]);
+    } else {
+      System.out.println("- Ignoring connector property, incorrect number of elements: " + Arrays.toString(split));
+    }
   }
 
   /**
