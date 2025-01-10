@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
+import org.apache.catalina.valves.ErrorReportValve;
 
 public class TomcatStartup {
 
@@ -67,6 +68,12 @@ public class TomcatStartup {
       System.out.println("- Using Connector: " + tomcat.getConnector());
 
       setConnectorPropertiesFromEnvironment(tomcat.getConnector());
+
+      // Add a valve to suppress the default error page and show nothing.
+      final ErrorReportValve errorReportValve = new ErrorReportValve();
+      errorReportValve.setShowReport(false);
+      errorReportValve.setShowServerInfo(false);
+      tomcat.getHost().getPipeline().addValve(errorReportValve);
 
       System.out.println("- Using context: " + (configContextPath == null ? "/" : configContextPath));
       if (configContextDirectory == null) {
