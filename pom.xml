@@ -21,7 +21,7 @@
 
   <groupId>nl.aerius</groupId>
   <artifactId>tomcat-standalone-parent</artifactId>
-  <version>1.2.6-SNAPSHOT</version>
+  <version>1.2.6</version>
   <name>Tomcat :: Standalone</name>
   <description>Package to be used to run webapps standalone (with an embedded Tomcat server).</description>
   <packaging>pom</packaging>
