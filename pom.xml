@@ -19,16 +19,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>nl.aerius</groupId>
+  <parent>
+    <groupId>nl.aerius</groupId>
+    <artifactId>aerius-root-pom</artifactId>
+    <version>1.4.0</version>
+    <relativePath /> <!-- lookup parent from repository -->
+  </parent>
+
   <artifactId>tomcat-standalone-parent</artifactId>
   <version>1.2.17-SNAPSHOT</version>
+  <packaging>pom</packaging>
   <name>Tomcat :: Standalone</name>
   <description>Package to be used to run webapps standalone (with an embedded Tomcat server).</description>
-  <packaging>pom</packaging>
-
-  <modules>
-    <module>tomcat-standalone</module>
-  </modules>
 
   <licenses>
     <license>
@@ -42,6 +44,10 @@
       <organization>Ministry of Agriculture, Fisheries, Food Security and Nature</organization>
       <organizationUrl>https://www.government.nl/ministries/ministry-of-agriculture-fisheries-food-security-and-nature</organizationUrl>
     </contributor>
+    <contributor>
+      <organization>Government of the United Kingdom</organization>
+      <organizationUrl>https://www.gov.uk</organizationUrl>
+    </contributor>
   </contributors>
 
   <scm>
@@ -51,16 +57,9 @@
     <tag>HEAD</tag>
   </scm>
 
-  <distributionManagement>
-    <repository>
-      <id>aerius-nexus</id>
-      <url>https://nexus.aerius.nl/repository/maven-releases/</url>
-    </repository>
-    <snapshotRepository>
-      <id>aerius-nexus</id>
-      <url>https://nexus.aerius.nl/repository/maven-snapshots/</url>
-    </snapshotRepository>
-  </distributionManagement>
+  <properties>
+    <tomcat.version>9.0.121</tomcat.version>
+  </properties>
 
   <repositories>
     <repository>
@@ -78,13 +77,9 @@
     </pluginRepository>
   </pluginRepositories>
 
-  <properties>
-    <tomcat.version>9.0.121</tomcat.version>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <aerius-tools.version>1.2.0</aerius-tools.version>
-  </properties>
+  <modules>
+    <module>tomcat-standalone</module>
+  </modules>
 
   <dependencyManagement>
     <dependencies>
