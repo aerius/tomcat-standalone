@@ -27,7 +27,7 @@
   </parent>
 
   <artifactId>tomcat-standalone-parent</artifactId>
-  <version>1.2.17</version>
+  <version>1.2.18-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Tomcat :: Standalone</name>
   <description>Package to be used to run webapps standalone (with an embedded Tomcat server).</description>
